@@ -4,6 +4,7 @@ from models.models import Subscribe
 
 from config_data.config import Config, load_config
 from models.models import engine
+
 # данные для соединения с базой данных
 # config: Config = load_config('./config_data/.env')
 #
@@ -59,7 +60,9 @@ def get_last_subscriptions(user_id, limit=5):
     session = Session()
 
     # Выбираем последние подписки пользователя
-    last_subscriptions = session.query(Subscribe).filter(Subscribe.user_id == user_id).order_by(Subscribe.created_at.desc()).limit(limit).all()
+    last_subscriptions = session.query(Subscribe).filter(
+        Subscribe.user_id == user_id).order_by(
+        Subscribe.created_at.desc()).limit(limit).all()
 
     # Закрываем сессию
     session.close()
@@ -79,6 +82,43 @@ def check_existing_subscription(user_id, product_id):
         Subscribe or None: Существующая подписка или None, если её нет.
     """
     session = Session()
-    existing_subscription = session.query(Subscribe).filter_by(user_id=user_id, product_id=product_id).first()
+    existing_subscription = session.query(Subscribe).filter_by(user_id=user_id,
+                                                               product_id=product_id).first()
+    if existing_subscription.subscribe_status == True:
+        session.close()
+        return True
+    else:
+        session.close()
+        return False
+
+def get_active_subscriptions():
+    """
+    Получает все активные подписки из базы данных.
+    Нет параметров.
+    Возвращает список активных подписок.
+    """
+    session = Session()
+    subs = (session.query(Subscribe).
+            filter(Subscribe.subscribe_status == True).all())
     session.close()
-    return existing_subscription
+    return subs
+
+
+def stop_active_subscriptions(user_id):
+    """
+    Остановить активные подписки для указанного идентификатора пользователя.
+
+    Аргументы:
+        user_id (int): Идентификатор пользователя, для которого следует остановить подписки.
+
+    Возвращает:
+        Ничего
+    """
+    session = Session()
+    subs = session.query(Subscribe).filter_by(user_id=user_id).all()
+
+    for sub in subs:
+        sub.subscribe_status = False
+
+    session.commit()
+    session.close()

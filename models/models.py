@@ -17,7 +17,6 @@ class Subscribe(Base):
     subscribe_status = Column(Boolean, default=True)
 
 
-
 # данные для соединения с базой данных
 config: Config = load_config('./config_data/.env')
 

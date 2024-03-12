@@ -9,7 +9,11 @@ from keyboards.user_keyboards import start_kb, subscribe_kb
 from lexicon.lexicon_ru import LEXICON_RU
 from services.services import get_info_from_wb
 from models.methods import (create_subscription, get_last_subscriptions,
-                            check_existing_subscription)
+                            check_existing_subscription,
+                            get_active_subscriptions,
+                            stop_active_subscriptions)
+
+
 
 router = Router()
 
@@ -99,7 +103,8 @@ async def process_get_another_btn_press(callback: CallbackQuery):
 # Хэндлер срабатывает на кнопки "отказ рассылки"
 @router.message(F.text == LEXICON_RU['stop_mailing'])
 async def process_stop_mailing_answer(message: Message):
-    await message.answer(text=LEXICON_RU['write_goods_id'])
+    stop_active_subscriptions(message.from_user.id)
+    await message.answer(text=LEXICON_RU['mailing_stopped'])
 
 
 # Хэндлер срабатывает на кнопку "инфа из базы данных"
@@ -116,3 +121,22 @@ async def process_get_info_from_db_answer(message: Message):
                 f'Кол-во: {p_data["stock"]} шт.\n'
                 f'id: {p_data["id"]}\n')
         await message.answer(text=info)
+
+# Хэндлер срабатывает на кнопку "посмотреть активные рассылки"
+@router.message(F.text == LEXICON_RU['get_active_subs'])
+async def process_get_active_subs_answer(message: Message):
+    active_subs = get_active_subscriptions()
+    if not active_subs:
+        await message.answer(text=LEXICON_RU['no_active_subs'])
+    else:
+        await message.answer(text=LEXICON_RU['your_active_subs'])
+        for sub in active_subs:
+            if sub.user_id == message.from_user.id:
+                p_data = get_info_from_wb(sub.product_id)
+                info = (f'Товар: {p_data["name"]}\n'
+                        f'Бренд: {p_data["brand"]}\n'
+                        f'Цена: {p_data["priceU"]} ₽\n'
+                        f'Распродажа: {p_data["salePriceU"]} ₽\n'
+                        f'Кол-во: {p_data["stock"]} шт.\n'
+                        f'id: {p_data["id"]}\n')
+                await message.answer(text=info)

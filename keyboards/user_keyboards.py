@@ -9,14 +9,15 @@ from lexicon.lexicon_ru import LEXICON_RU
 # Создаем кнопки стартового меню
 button_info_goods = KeyboardButton(text=LEXICON_RU['info_goods'])
 button_stop_mailing = KeyboardButton(text=LEXICON_RU['stop_mailing'])
+button_get_active_subs = KeyboardButton(text=LEXICON_RU['get_active_subs'])
 button_get_info_from_db = KeyboardButton(text=LEXICON_RU['get_info_from_db'])
 
 # Инициализируем билдер для стартовой клавиатуры
 start_kb_builder = ReplyKeyboardBuilder()
 
 # Добавляем кнопки в билдер
-start_kb_builder.row(button_info_goods, button_stop_mailing,
-                     button_get_info_from_db, width=2)
+start_kb_builder.row(button_info_goods, button_get_active_subs,
+                     button_stop_mailing, button_get_info_from_db, width=1)
 
 # Создаем стартовую клавиатуру
 start_kb: ReplyKeyboardMarkup = start_kb_builder.as_markup(

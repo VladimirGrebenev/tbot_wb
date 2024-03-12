@@ -1,6 +1,6 @@
 import requests
 import json
-
+import asyncio
 
 def get_info_from_wb(artikul: int) -> dict:
     """
@@ -38,4 +38,5 @@ def get_info_from_wb(artikul: int) -> dict:
         return result
     else:
         return None
+
 

@@ -1,8 +1,10 @@
 import asyncio
-
 from aiogram import Bot, Dispatcher
+from apscheduler.schedulers.asyncio import AsyncIOScheduler
+
 from config_data.config import Config, load_config
 from handlers import other_handlers, user_handlers
+from services.mailing_subscriptions import mailing_subscriptions
 
 
 # Функция конфигурирования и запуска бота
@@ -14,13 +16,22 @@ async def main():
     bot = Bot(token=config.tg_bot.token)
     dp = Dispatcher()
 
+    # Инициализируем крон
+    scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
+    scheduler.add_job(mailing_subscriptions, trigger='interval',
+                      seconds=10,
+                      kwargs={'bot': bot})
+    scheduler.start()
+
     # Регистриуем роутеры в диспетчере
     dp.include_router(user_handlers.router)
     dp.include_router(other_handlers.router)
 
-    # Пропускаем накопившиеся апдейты и запускаем polling
+    # Пропускаем накопившиеся апдейты и запускаем поллинг
     await bot.delete_webhook(drop_pending_updates=True)
     await dp.start_polling(bot)
 
 
-asyncio.run(main())
+# Запускаем бот
+if __name__ == '__main__':
+    asyncio.run(main())
