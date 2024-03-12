@@ -1,4 +1,4 @@
 # Project exclude paths
 /.venv/
-.env
+config_data/.env
 /.idea/
