@@ -18,7 +18,7 @@ class Subscribe(Base):
 
 
 # данные для соединения с базой данных
-config: Config = load_config('./config_data/.env')
+config: Config = load_config()
 
 db_host = config.db.db_host  # хост базы данных
 db_port = config.db.db_port  # порт базы данных

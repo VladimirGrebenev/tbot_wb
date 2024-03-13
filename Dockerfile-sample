@@ -1,0 +1,31 @@
+FROM python:3.10
+
+# Устанавливаем зависимости
+COPY requirements.txt /app/requirements.txt
+RUN pip install --no-cache-dir -r /app/requirements.txt
+
+# Копируем исходный код в контейнер
+COPY . /app
+WORKDIR /app
+
+# Добавляем wait-for-it.sh в контейнер
+ADD https://raw.githubusercontent.com/vishnubob/wait-for-it/master/wait-for-it.sh /app/wait-for-it.sh
+RUN chmod +x /app/wait-for-it.sh
+
+# Устанавливаем переменные окружения
+ENV BOT_TOKEN=ваш_токен
+ENV ADMIN_IDS=[ваш id,]
+
+ENV DB_NAME='db_tbot_wb'
+ENV DB_USER='admin'
+ENV DB_PASSWORD='strong_password'
+ENV DB_HOST='db'
+ENV DB_PORT='5432'
+
+# Устанавливаем переменные окружения для PostgreSQL
+ENV POSTGRES_USER=admin
+ENV POSTGRES_PASSWORD=strong_password
+ENV POSTGRES_DB=db_tbot_wb
+
+# Запускаем приложение с ожиданием запуска базы данных
+CMD /app/wait-for-it.sh db:5432 -- python main.py

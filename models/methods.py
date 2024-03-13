@@ -5,19 +5,7 @@ from models.models import Subscribe
 from config_data.config import Config, load_config
 from models.models import engine
 
-# данные для соединения с базой данных
-# config: Config = load_config('./config_data/.env')
-#
-# db_host = config.db.db_host  # хост базы данных
-# db_port = config.db.db_port  # порт базы данных
-# db_database = config.db.db_database  # имя базы данных
-# db_user = config.db.db_user  # имя пользователя базы данных
-# db_password = config.db.db_password  # пароль пользователя базы данных
-#
-# # Создаём строку подключения к базе данных
-# DATABASE_URL = f'postgresql://{db_user}:{db_password}@{db_host}/{db_database}'
-# # Создаём engine для взаимодействия с базой данных
-# engine = create_engine(DATABASE_URL)
+
 Session = sessionmaker(bind=engine)
 
 
@@ -84,9 +72,13 @@ def check_existing_subscription(user_id, product_id):
     session = Session()
     existing_subscription = session.query(Subscribe).filter_by(user_id=user_id,
                                                                product_id=product_id).first()
-    if existing_subscription.subscribe_status == True:
-        session.close()
-        return True
+    if existing_subscription:
+        if existing_subscription.subscribe_status == True:
+            session.close()
+            return True
+        else:
+            session.close()
+            return False
     else:
         session.close()
         return False

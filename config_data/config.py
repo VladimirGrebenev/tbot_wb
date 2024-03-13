@@ -24,11 +24,11 @@ class Config:
     db: DatabaseConfig
 
 
-def load_config(path: str | None = None) -> Config:
+def load_config() -> Config:
     """Функция создания экземпляра класса Config"""
 
-    # Загуржаем данные из файла .env в Env
-    dotenv.load_dotenv(path)
+    # Загружаем данные из файла .env в Env
+    # dotenv.load_dotenv(path)
 
     # Добавляем в переменные данные, прочитанные из файла .env
     BOT_TOKEN = os.getenv('BOT_TOKEN')

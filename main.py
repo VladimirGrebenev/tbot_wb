@@ -11,7 +11,7 @@ from keyboards.set_menu import set_main_menu
 # Функция конфигурирования и запуска бота
 async def main():
     # Загружаем конфиг в переменную config
-    config: Config = load_config('./config_data/.env')
+    config: Config = load_config()
 
     # Инициализируем бот и диспетчер
     bot = Bot(token=config.tg_bot.token)
