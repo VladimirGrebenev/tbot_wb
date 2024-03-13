@@ -20,7 +20,7 @@ async def main():
     # Инициализируем крон
     scheduler = AsyncIOScheduler(timezone='Europe/Moscow')
     scheduler.add_job(mailing_subscriptions, trigger='interval',
-                      seconds=10,
+                      seconds=300,
                       kwargs={'bot': bot})
     scheduler.start()
 
