@@ -1,0 +1,22 @@
+version: '3.8'
+
+services:
+  telegram-bot:
+    build: .
+    environment:
+      BOT_TOKEN: "ваш токен"
+      ADMIN_IDS: "[ваш id,]"
+      DB_NAME: "db_tbot_wb"
+      DB_USER: "admin"
+      DB_PASSWORD: "strong_password"
+      DB_HOST: "db"
+      DB_PORT: "5432"
+    depends_on:
+      - db
+
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_USER: "admin"
+      POSTGRES_PASSWORD: "strong_password"
+      POSTGRES_DB: "db_tbot_wb"
